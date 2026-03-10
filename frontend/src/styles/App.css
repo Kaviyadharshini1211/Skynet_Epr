@@ -30,7 +30,6 @@ body,
   height: 100vh;
   overflow: hidden;
   background: #0f1117;
-  position: relative;   /* IMPORTANT */
 }
 
 /* ── Left sidebar ── */
@@ -55,6 +54,9 @@ body,
   flex: 1;
   overflow-y: auto;
   background: #0f1117;
+
+  /* space for header */
+  padding-top: 60px;
 }
 
 .app-detail::-webkit-scrollbar { width: 4px; }
@@ -64,13 +66,34 @@ body,
   border-radius: 4px;
 }
 
+/* ── Top header bar ── */
+
+.app-header {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 360px;
+
+  height: 60px;
+
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+
+  padding: 0 22px;
+
+  background: #0f1117;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+
+  z-index: 50;
+}
+
 /* ── Logged-in user badge ── */
 
 .app-user-badge {
-  position: absolute;
+    position: absolute;
   top: 18px;
   right: 22px;
-
   background: #1a1d28;
   border: 1px solid rgba(255,255,255,0.08);
   padding: 6px 12px;

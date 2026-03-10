@@ -20,10 +20,34 @@ export default function EprModal({ person, onClose, onCreated }: any) {
   });
 
   const handleChange = (e: any) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+
+    let value = e.target.value;
+
+    /* Ensure ratings stay between 1–5 */
+
+    if (
+      e.target.name === "overall_rating" ||
+      e.target.name === "technical_skills_rating" ||
+      e.target.name === "non_technical_skills_rating"
+    ) {
+
+      if (value !== "") {
+        const num = Number(value);
+
+        if (num < 1 || num > 5) {
+          setError("Ratings must be between 1 and 5");
+        } else {
+          setError("");
+        }
+      }
+
+    }
+
+    setForm({ ...form, [e.target.name]: value });
   };
 
   const submit = async () => {
+
     setError("");
 
     if (!form.period_start || !form.period_end) {
@@ -36,12 +60,32 @@ export default function EprModal({ person, onClose, onCreated }: any) {
       return;
     }
 
+    /* Validate ratings */
+
+    const ratings = [
+      Number(form.overall_rating),
+      Number(form.technical_skills_rating),
+      Number(form.non_technical_skills_rating)
+    ];
+
+    for (let r of ratings) {
+      if (r < 1 || r > 5) {
+        setError("Ratings must be between 1 and 5.");
+        return;
+      }
+    }
+
     try {
+
       setSaving(true);
+
       await axios.post(
         "http://localhost:5000/api/epr",
         {
           ...form,
+          overall_rating: Number(form.overall_rating),
+          technical_skills_rating: Number(form.technical_skills_rating),
+          non_technical_skills_rating: Number(form.non_technical_skills_rating),
           person_id: person.id,
           evaluator_id: currentUser.id,
           role_type: person.role
@@ -53,18 +97,36 @@ export default function EprModal({ person, onClose, onCreated }: any) {
           }
         }
       );
+
       onCreated();
       onClose();
+
     } catch (err: any) {
-      setError(err.response?.data?.message ?? "Failed to create EPR.");
+
+      if (err.response?.data?.message) {
+        setError(err.response.data.message);
+      } else {
+        setError("Failed to create EPR.");
+      }
+
     } finally {
+
       setSaving(false);
+
     }
   };
 
   const generateRemarks = async () => {
+
+    if (!form.overall_rating || !form.technical_skills_rating || !form.non_technical_skills_rating) {
+      setError("Enter ratings before generating AI remarks.");
+      return;
+    }
+
     try {
+
       setGenerating(true);
+
       const res = await axios.post(
         "http://localhost:5000/api/epr/assist",
         {
@@ -73,12 +135,20 @@ export default function EprModal({ person, onClose, onCreated }: any) {
           nonTechnicalSkillsRating: Number(form.non_technical_skills_rating)
         }
       );
+
       setForm({ ...form, remarks: res.data.suggestedRemarks });
+
     } catch (err) {
+
       console.error("AI assist failed", err);
+      setError("AI remark generation failed.");
+
     } finally {
+
       setGenerating(false);
+
     }
+
   };
 
   return (
@@ -91,12 +161,14 @@ export default function EprModal({ person, onClose, onCreated }: any) {
             <span className="eprm-modal__eyebrow">New Entry</span>
             <h3 className="eprm-modal__title">Create Performance Record</h3>
           </div>
+
           {person && (
             <div className="eprm-modal__person-badge">
               <span className="eprm-modal__person-name">{person.name}</span>
               <span className="eprm-modal__person-role">{person.role}</span>
             </div>
           )}
+
         </div>
 
         <div className="eprm-modal__divider" />
@@ -108,8 +180,9 @@ export default function EprModal({ person, onClose, onCreated }: any) {
           </div>
         )}
 
-        {/* Period row */}
+        {/* Period */}
         <div className="eprm-modal__row">
+
           <div className="eprm-modal__field">
             <label className="eprm-modal__label">Period Start</label>
             <input
@@ -119,6 +192,7 @@ export default function EprModal({ person, onClose, onCreated }: any) {
               onChange={handleChange}
             />
           </div>
+
           <div className="eprm-modal__field">
             <label className="eprm-modal__label">Period End</label>
             <input
@@ -128,94 +202,104 @@ export default function EprModal({ person, onClose, onCreated }: any) {
               onChange={handleChange}
             />
           </div>
+
         </div>
 
-        {/* Ratings grid */}
+        {/* Ratings */}
         <div className="eprm-modal__row">
+
           <div className="eprm-modal__field">
             <label className="eprm-modal__label">Overall Rating</label>
-            <div className="eprm-modal__input-wrap">
-              <input
-                className="eprm-modal__input"
-                type="number"
-                name="overall_rating"
-                min="1" max="5"
-                onChange={handleChange}
-              />
-              <span className="eprm-modal__input-suffix">/ 5</span>
-            </div>
+            <input
+              className="eprm-modal__input"
+              type="number"
+              name="overall_rating"
+              min="1"
+              max="5"
+              onChange={handleChange}
+            />
           </div>
 
           <div className="eprm-modal__field">
             <label className="eprm-modal__label">Technical Skills</label>
-            <div className="eprm-modal__input-wrap">
-              <input
-                className="eprm-modal__input"
-                type="number"
-                name="technical_skills_rating"
-                min="1" max="5"
-                onChange={handleChange}
-              />
-              <span className="eprm-modal__input-suffix">/ 5</span>
-            </div>
+            <input
+              className="eprm-modal__input"
+              type="number"
+              name="technical_skills_rating"
+              min="1"
+              max="5"
+              onChange={handleChange}
+            />
           </div>
 
           <div className="eprm-modal__field">
             <label className="eprm-modal__label">Non-Technical Skills</label>
-            <div className="eprm-modal__input-wrap">
-              <input
-                className="eprm-modal__input"
-                type="number"
-                name="non_technical_skills_rating"
-                min="1" max="5"
-                onChange={handleChange}
-              />
-              <span className="eprm-modal__input-suffix">/ 5</span>
-            </div>
+            <input
+              className="eprm-modal__input"
+              type="number"
+              name="non_technical_skills_rating"
+              min="1"
+              max="5"
+              onChange={handleChange}
+            />
           </div>
 
           <div className="eprm-modal__field">
             <label className="eprm-modal__label">Status</label>
-            <select className="eprm-modal__select" name="status" onChange={handleChange}>
+            <select
+              className="eprm-modal__select"
+              name="status"
+              onChange={handleChange}
+            >
               <option value="draft">Draft</option>
               <option value="submitted">Submitted</option>
             </select>
           </div>
+
         </div>
 
         {/* Remarks */}
         <div className="eprm-modal__field">
+
           <div className="eprm-modal__label-row">
-            <label className="eprm-modal__label">Instructor Remarks</label>
+
+            <label className="eprm-modal__label">
+              Instructor Remarks
+            </label>
+
             <button
               className="eprm-modal__btn eprm-modal__btn--ai"
               type="button"
               onClick={generateRemarks}
               disabled={generating}
             >
-              {generating ? (
-                <><span className="eprm-spinner" /> Generating…</>
-              ) : (
-                <><span className="eprm-modal__btn-icon">✦</span> AI Suggest</>
-              )}
+              {generating ? "Generating…" : "✦ AI Suggest"}
             </button>
+
           </div>
+
           <textarea
             className="eprm-modal__textarea"
             name="remarks"
             value={form.remarks}
             onChange={handleChange}
-            placeholder="Write remarks or use AI to generate a suggestion…"
+            placeholder="Write remarks or use AI to generate…"
           />
+
         </div>
 
         <div className="eprm-modal__divider" />
 
         {/* Footer */}
         <div className="eprm-modal__actions">
-          <button className="eprm-modal__btn eprm-modal__btn--ghost" onClick={onClose}>
+
+          <button
+            className="eprm-modal__btn eprm-modal__btn--ghost"
+            onClick={onClose}
+          >
             Cancel
           </button>
+
           <button
             className="eprm-modal__btn eprm-modal__btn--primary"
             onClick={submit}
@@ -223,6 +307,7 @@ export default function EprModal({ person, onClose, onCreated }: any) {
           >
             {saving ? "Saving…" : "Save EPR"}
           </button>
+
         </div>
 
       </div>
