@@ -30,6 +30,7 @@ body,
   height: 100vh;
   overflow: hidden;
   background: #0f1117;
+  position: relative;   /* IMPORTANT */
 }
 
 /* ── Left sidebar ── */
@@ -61,4 +62,31 @@ body,
 .app-detail::-webkit-scrollbar-thumb {
   background: rgba(255,255,255,0.07);
   border-radius: 4px;
+}
+
+/* ── Logged-in user badge ── */
+
+.app-user-badge {
+  position: absolute;
+  top: 18px;
+  right: 22px;
+
+  background: #1a1d28;
+  border: 1px solid rgba(255,255,255,0.08);
+  padding: 6px 12px;
+  border-radius: 6px;
+
+  font-size: 13px;
+  color: #e8eaf2;
+
+  display: flex;
+  gap: 6px;
+  align-items: center;
+
+  box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+}
+
+.app-user-role {
+  color: #9ca3af;
+  text-transform: capitalize;
 }

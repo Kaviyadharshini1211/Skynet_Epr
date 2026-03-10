@@ -26,22 +26,53 @@ export default function PersonDetails({ person }: any) {
         { headers: { "x-user-id": currentUser.id, "x-user-role": currentUser.role } }
       );
       setSummary(res.data);
-    } catch {
-      setSummary(null);
-    }
+    } catch (error: any) {
+
+  if (error.response?.status === 403) {
+
+    setSummary(null);
+    setEprs([]);
+
+  } else {
+
+    console.error("Summary fetch failed", error);
+
+  }
+
+}
   };
 
   const fetchEprs = async () => {
-    try {
-      const res = await axios.get(
-        `http://localhost:5000/api/epr?personId=${person.id}`,
-        { headers: { "x-user-id": currentUser.id, "x-user-role": currentUser.role } }
-      );
-      setEprs(res.data);
-    } catch (error) {
+  try {
+
+    const res = await axios.get(
+      `http://localhost:5000/api/epr?personId=${person.id}`,
+      {
+        headers: {
+          "x-user-id": currentUser.id,
+          "x-user-role": currentUser.role
+        }
+      }
+    );
+
+    setEprs(res.data);
+
+  } catch (error: any) {
+
+    if (error.response?.status === 403) {
+
+      /* clear previous EPRs */
+
+      setEprs([]);
+
+    } else {
+
       console.error("EPR fetch failed", error);
+
     }
-  };
+
+  }
+};
 
   if (!person) {
     return (
@@ -93,6 +124,8 @@ export default function PersonDetails({ person }: any) {
 
       {/* Performance Snapshot */}
       {summary && (
+  currentUser.role === "instructor" || person.id === currentUser.id
+) && (
         <div className="pd-snapshot">
           <div className="pd-section-eyebrow">Performance Snapshot</div>
 

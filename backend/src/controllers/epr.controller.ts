@@ -3,7 +3,8 @@ import {
   getEprsByPersonAndEvaluator,
   getEprById,
   createEpr,
-  updateEpr
+  updateEpr,
+  getEprByPerson
 } from "../services/epr.service";
 
 /* ---------------- GET EPR LIST ---------------- */
@@ -34,7 +35,7 @@ export async function getEprs(req: Request, res: Response) {
         });
       }
 
-      const eprs = await getEprsByPersonAndEvaluator(personId, currentUserId);
+      const eprs = await getEprByPerson(personId);
 
       return res.json(eprs);
     }
@@ -43,7 +44,10 @@ export async function getEprs(req: Request, res: Response) {
 
     if (currentUserRole === "instructor") {
 
-      const eprs = await getEprsByPersonAndEvaluator(personId, currentUserId);
+      const eprs = await getEprsByPersonAndEvaluator(
+        personId,
+        currentUserId
+      );
 
       return res.json(eprs);
     }
@@ -60,7 +64,6 @@ export async function getEprs(req: Request, res: Response) {
 
   }
 }
-
 
 /* ---------------- GET SINGLE EPR ---------------- */
 

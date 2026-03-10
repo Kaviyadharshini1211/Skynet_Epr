@@ -28,7 +28,11 @@ export async function getEprsByPersonAndEvaluator(
     })
     .orderBy("period_start", "desc");
 }
-
+export async function getEprByPerson(personId: string) {
+  return db("epr_records")
+    .where("person_id", personId)
+    .orderBy("period_start", "desc");
+}
 /* ---------------- GET SINGLE EPR ---------------- */
 
 export async function getEprById(id: string) {
