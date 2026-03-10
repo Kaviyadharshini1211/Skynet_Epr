@@ -1,0 +1,333 @@
+/* ═══════════════════════════════════════
+   EprDetailModal — refined dark-card style
+   All classes prefixed epr- (no clashes)
+═══════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
+
+/* ── Tokens ── */
+:root {
+  --epr-bg-overlay:       rgba(10, 12, 20, 0.72);
+  --epr-modal-bg:         #0f1117;
+  --epr-modal-border:     rgba(255, 255, 255, 0.08);
+  --epr-surface:          #181c27;
+  --epr-surface-hover:    #1e2333;
+  --epr-accent:           #6c8cff;
+  --epr-accent-glow:      rgba(108, 140, 255, 0.18);
+  --epr-text-primary:     #e8eaf2;
+  --epr-text-secondary:   #7b8197;
+  --epr-text-disabled:    #3d4157;
+  --epr-border:           rgba(255, 255, 255, 0.07);
+  --epr-radius:           14px;
+  --epr-radius-sm:        8px;
+  --epr-font:             'DM Sans', sans-serif;
+  --epr-font-mono:        'DM Mono', monospace;
+  --epr-transition:       0.18s ease;
+
+  /* status colors */
+  --epr-draft-bg:         rgba(250, 176, 5, 0.12);
+  --epr-draft-text:       #f5a623;
+  --epr-submitted-bg:     rgba(52, 211, 153, 0.12);
+  --epr-submitted-text:   #34d399;
+  --epr-archived-bg:      rgba(148, 163, 184, 0.1);
+  --epr-archived-text:    #94a3b8;
+}
+
+/* ── Overlay ── */
+.epr-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--epr-bg-overlay);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: eprFadeIn 0.22s ease;
+}
+
+@keyframes eprFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ── Modal box ── */
+.epr-modal {
+  background: var(--epr-modal-bg);
+  border: 1px solid var(--epr-modal-border);
+  border-radius: var(--epr-radius);
+  width: 480px;
+  max-width: calc(100vw - 32px);
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  font-family: var(--epr-font);
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.04),
+    0 24px 64px rgba(0, 0, 0, 0.6),
+    0 4px 16px rgba(0, 0, 0, 0.4);
+  animation: eprSlideUp 0.26s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes eprSlideUp {
+  from { opacity: 0; transform: translateY(20px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0)    scale(1);    }
+}
+
+/* Scrollbar */
+.epr-modal::-webkit-scrollbar { width: 4px; }
+.epr-modal::-webkit-scrollbar-track { background: transparent; }
+.epr-modal::-webkit-scrollbar-thumb { background: var(--epr-border); border-radius: 4px; }
+
+/* ── Header ── */
+.epr-modal__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.epr-modal__header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.epr-modal__eyebrow {
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--epr-accent);
+  font-family: var(--epr-font-mono);
+}
+
+.epr-modal__title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--epr-text-primary);
+  letter-spacing: -0.02em;
+}
+
+/* ── Status badge ── */
+.epr-status {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 11px;
+  border-radius: 20px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-family: var(--epr-font-mono);
+  white-space: nowrap;
+}
+
+.epr-status--draft {
+  background: var(--epr-draft-bg);
+  color: var(--epr-draft-text);
+}
+
+.epr-status--submitted {
+  background: var(--epr-submitted-bg);
+  color: var(--epr-submitted-text);
+}
+
+.epr-status--archived {
+  background: var(--epr-archived-bg);
+  color: var(--epr-archived-text);
+}
+
+/* ── Divider ── */
+.epr-modal__divider {
+  height: 1px;
+  background: var(--epr-border);
+  margin: -4px 0;
+}
+
+/* ── Ratings grid ── */
+.epr-modal__ratings-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+/* ── Field ── */
+.epr-modal__field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.epr-modal__field--full {
+  grid-column: 1 / -1;
+}
+
+.epr-modal__label {
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--epr-text-secondary);
+  font-family: var(--epr-font-mono);
+}
+
+/* ── Input wrap (number + suffix) ── */
+.epr-modal__input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.epr-modal__input-suffix {
+  position: absolute;
+  right: 12px;
+  font-size: 0.78rem;
+  color: var(--epr-text-disabled);
+  font-family: var(--epr-font-mono);
+  pointer-events: none;
+}
+
+/* ── Shared input base ── */
+.epr-modal__input,
+.epr-modal__textarea,
+.epr-modal__select {
+  width: 100%;
+  background: var(--epr-surface);
+  border: 1px solid var(--epr-border);
+  border-radius: var(--epr-radius-sm);
+  color: var(--epr-text-primary);
+  font-family: var(--epr-font);
+  font-size: 0.9rem;
+  padding: 10px 14px;
+  box-sizing: border-box;
+  transition:
+    border-color var(--epr-transition),
+    background   var(--epr-transition),
+    box-shadow   var(--epr-transition);
+  appearance: none;
+  -webkit-appearance: none;
+  outline: none;
+}
+
+.epr-modal__input { padding-right: 40px; }
+
+.epr-modal__input:hover:not(:disabled),
+.epr-modal__textarea:hover:not(:disabled),
+.epr-modal__select:hover:not(:disabled) {
+  background: var(--epr-surface-hover);
+  border-color: rgba(255,255,255,0.14);
+}
+
+.epr-modal__input:focus:not(:disabled),
+.epr-modal__textarea:focus:not(:disabled),
+.epr-modal__select:focus:not(:disabled) {
+  border-color: var(--epr-accent);
+  box-shadow: 0 0 0 3px var(--epr-accent-glow);
+  background: var(--epr-surface-hover);
+}
+
+.epr-modal__input:disabled,
+.epr-modal__textarea:disabled,
+.epr-modal__select:disabled {
+  background: rgba(255,255,255,0.02);
+  border-color: rgba(255,255,255,0.04);
+  color: var(--epr-text-secondary);
+  cursor: not-allowed;
+}
+
+/* Number input — hide spinners */
+.epr-modal__input[type="number"]::-webkit-inner-spin-button,
+.epr-modal__input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
+.epr-modal__input[type="number"] { -moz-appearance: textfield; }
+
+/* Textarea */
+.epr-modal__textarea {
+  resize: vertical;
+  min-height: 90px;
+  line-height: 1.55;
+}
+
+.epr-modal__textarea::placeholder { color: var(--epr-text-disabled); }
+
+/* Select custom arrow */
+.epr-modal__select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%237b8197' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 34px;
+  cursor: pointer;
+}
+
+.epr-modal__select option {
+  background: #1e2333;
+  color: var(--epr-text-primary);
+}
+
+/* ── Footer actions ── */
+.epr-modal__actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+/* ── Buttons ── */
+.epr-modal__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 22px;
+  font-family: var(--epr-font);
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: var(--epr-radius-sm);
+  border: none;
+  cursor: pointer;
+  transition:
+    background     var(--epr-transition),
+    color          var(--epr-transition),
+    box-shadow     var(--epr-transition),
+    transform      var(--epr-transition);
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+
+.epr-modal__btn:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.epr-modal__btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Primary */
+.epr-modal__btn--primary {
+  background: var(--epr-accent);
+  color: #fff;
+  box-shadow: 0 2px 12px var(--epr-accent-glow);
+}
+
+.epr-modal__btn--primary:hover:not(:disabled) {
+  background: #7d9bff;
+  box-shadow: 0 4px 20px rgba(108, 140, 255, 0.35);
+}
+
+/* Ghost */
+.epr-modal__btn--ghost {
+  background: transparent;
+  color: var(--epr-text-secondary);
+  border: 1px solid var(--epr-border);
+}
+
+.epr-modal__btn--ghost:hover:not(:disabled) {
+  background: var(--epr-surface);
+  color: var(--epr-text-primary);
+  border-color: rgba(255,255,255,0.14);
+}
