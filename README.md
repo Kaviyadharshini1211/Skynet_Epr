@@ -1,4 +1,4 @@
-# Skynet EPR System – Full Stack Technical Assessment
+# Skynet EPR System 
 
 This project is a simplified **Employee Performance Record (EPR) system** inspired by AIRMAN’s Skynet platform.
 It allows instructors to create performance evaluations for students, view performance summaries, and generate AI-assisted remarks.
